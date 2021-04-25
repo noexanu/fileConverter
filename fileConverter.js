@@ -7,7 +7,17 @@
 
 
 
-const fileSystem = require('fs');
+const { createReadStream, createWriteStream } = require('fs');
+const { Transform } = require('stream');
+
+class Converter extends Transform {
+  _transform(chunk, encoding, callback) {
+    const data = chunk.toString();
+    console.log(data);
+    this.push(data.replace(/[0]/g,'zero'));
+    callback();
+  }
+}
 
 class File {
   constructor(directory, name, extension) {
@@ -15,39 +25,28 @@ class File {
     this.extension = extension;
     this.directory = directory;
   }
-  #extensions = ['txt','xml','json','csv']
-  #readFile = function() {
-    const
-      link = `${this.directory}${this.name}.${this.extension}`,
-      readStream = fileSystem.createReadStream(link);
-    readStream.on('error', err => { throw err });
-    return readStream;
-  }
-  #saveFile = function() {
-    const 
-      link = `${this.directory}${this.name}.${this.extension}`,
-      writeStream = fileSystem.createWriteStream(link);
-    writeStream.on('error', err => { throw err });
-    return writeStream;
-  }
-  #isSupported = function() { 
-    return this.#extensions.includes(this.extension) ? true : false;
-  }
+  static #SUPPORTED_EXTENSIONS = ['txt','xml','json','csv']
+  #getLink() { return `${this.directory}${this.name}.${this.extension}`; }
+  #isSupported() { return File.#SUPPORTED_EXTENSIONS.includes(this.extension) ? true : false; }
   convertTo(outputFile) {
     const inputFile = this;
     if (inputFile.#isSupported() && outputFile.#isSupported()) {
-
-
-      
-      inputFile.#readFile().pipe(outputFile.#saveFile());
+      const readable = createReadStream(inputFile.#getLink());
+      const writable = createWriteStream(outputFile.#getLink());
+      const transform = new Converter;
+      readable
+      .on('error', err => { throw err })
+      .pipe(transform)
+      .on('error', err => { throw err })
+      .pipe(writable)
+      .on('error', err => { throw err });
     }
     else { throw new Error('Files have unsupported extensions. Converter works only with .xml, .json and .csv extensions') }
   }
 }
 
+//node "fileConverter.js"
 
-
-const
-  inputFile = new File('../','pi','txt'),
-  outputFile = new File('../','piCopy','txt');
+const inputFile = new File('../','pi','txt');
+const outputFile = new File('../','piCopy','txt');
 inputFile.convertTo(outputFile);
