@@ -7,16 +7,37 @@
 
 
 
-if (process.argv.length < 4) { throw new Error('You should specify 2 directories. Example: c:/.../input.json d:/.../output.xml') };
-const arguments = process.argv.slice(2);
-const link1 = {
-  location : arguments[0].match(/.+\\/)[0],
-  name : arguments[0].match(/[^\\]+(?=\.)(?!.+\\)/)[0],
-  extension : arguments[0].match(/\w+$/)[0]
-
-  // location : /.+(?=\\)/.match(arguments[0]),
-  // name : /[^\\]+(?=\.)(?!.+\\)/.match(arguments[0]),
-  // extension : /\w+$/.match(arguments[0])
+class File {
+  constructor(object) {
+    this.name = object.name;
+    this.extension = object.extension;
+    this.directory = object.directory;
+  }
 }
-const link2 = arguments[1]
-console.log(link1, link2)
+
+
+
+class Interface {
+  constructor(inputFileObject, outputFileObject) {
+    this.files = [inputFileObject, outputFileObject];
+  }
+  parseArguments() {
+    if (process.argv.length !== 4) { throw new Error('You should specify 2 directories. Example: c:/.../input.json d:/.../output.xml') };
+    process.argv.slice(2).map((string, index) => {
+      const file = new Object;
+      file.name = Interface.#MATCH_STRING(/[^\\]+(?=\.)(?!.+\\)/, string);
+      file.extension = Interface.#MATCH_STRING(/\w+$/, string);
+      file.directory = Interface.#MATCH_STRING(/.+\\/, string);
+      this.files[index] = file;
+    });
+  }
+  static #MATCH_STRING(regexp, string) { return string.match(regexp)[0]};
+}
+
+//node "fileConverter.js" C:\Users\YAN\Desktop\pi.txt C:\Users\YAN\Desktop\piCopy.txt
+
+const cli = new Interface;
+cli.parseArguments();
+const inputFile = new File(cli.files[0]);
+const outputFile = new File(cli.files[1]);
+console.log(inputFile, outputFile);
