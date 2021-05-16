@@ -1,5 +1,5 @@
 import { createReadStream, createWriteStream } from 'fs';
-import TransformStream from './Transform.js';
+import TransformStream from './TransformStream.js';
 
 class Converter {
   /**
