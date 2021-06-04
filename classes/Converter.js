@@ -9,19 +9,16 @@ class Converter {
 
   static convert(inputFile, outputFile) {
     // Declaration of read\transform\write streams
-
     const readableStream = createReadStream(inputFile);
     const writableStream = createWriteStream(outputFile);
     const transformStream = new TransformStream();
 
     // Declaration of error handler
-
     const errorHandler = (err) => {
       throw err;
     };
 
     // Streams flow control
-
     readableStream
       .on('error', errorHandler)
       .pipe(transformStream)

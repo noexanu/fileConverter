@@ -10,7 +10,7 @@ import File from './classes/File.js';
 import Converter from './classes/Converter.js';
 
 // Creating new files objects
-const inputFile = new File('C:\\Users\\YAN\\Desktop', 'pi', 'json');
+const inputFile = new File('C:\\Users\\YAN\\Desktop', 'pi', 'xml');
 const outputFile = new File('C:\\Users\\YAN\\Desktop', 'piCopy', 'json');
 
 // Convert input file to output file
@@ -19,5 +19,3 @@ if (inputFile.isSupported() && outputFile.isSupported()) {
 } else {
   throw new Error('Files have unsupported extensions.');
 }
-
-// node "fileConverter.js"

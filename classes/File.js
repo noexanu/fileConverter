@@ -52,7 +52,7 @@ class File {
     if (!this.extension) {
       throw new Error('File extension is not specified.');
     }
-    return !!File.#SUPPORTED_EXTENSIONS.includes(this.extension);
+    return File.#SUPPORTED_EXTENSIONS.includes(this.extension);
   }
 }
 
